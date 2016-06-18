@@ -6,7 +6,6 @@
 #include "DataTypes.h"
 /* In this program we assume that We have already read Image intensties and these were supplied to Dark Channel method along with patch size and these two were the inputs for the program */
 int minarray(unsigned char* start,int size);/*forward declaration to avoid compiler warnings */
-ImageData im_read(char* filename);/*forward declaration for correct linking of Program */
 unsigned char* makeDarkChannel(ImageData i, int patch_size)
 {
   int r,c,h,k,f,h1,k1;/* Declaration of loop variables*/
@@ -77,19 +76,3 @@ int minarray(unsigned char* start,int size)
     min_val=*(start+i);
     return min_val;
     }
- int main()
- {
-  int y,patch_size;
-  patch_size=3;
-  ImageData cones_data=im_read("cones.jpg");
-  unsigned char* J=makeDarkChannel(cones_data,3);
-  FILE* mdc=fopen("makeDarkChannel.csv","w");
-  for(y=0;y<(cones_data.height)*(cones_data.width);y++)
-   fprintf(mdc,"%d\n",*(J+y));
-  free(J);
-  free(cones_data.rdata);
-  free(cones_data.gdata);
-  free(cones_data.bdata);
-  return 0;
-  
-  }  
