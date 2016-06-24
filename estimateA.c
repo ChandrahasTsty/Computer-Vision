@@ -7,7 +7,7 @@
 
 /* The following few lines of code are for a function that returns a minimum value of array along with index, To do that We are using a struct with minimum value and it's index as fields */
 
-/* Defnition of above defined strcut */
+/* Definition of above defined strcut */
 ImageData im_read(char* filename);/*forward declaration for correct linking of Program */
 unsigned char* makeDarkChannel(ImageData i, int patch_size);
 
@@ -19,11 +19,13 @@ int index;
 /* Defnition of the minimum function */  
 min_ret minimum(unsigned char* start,int size)
 {
- unsigned char min_val=*(start);
+ 
  min_ret ret;
+ ret.min_val=*(start);
+ ret.index=0;
  int i;
   for(i=0;i<size;i++)
-   if(*(start+i)<min_val)
+   if(*(start+i)<ret.min_val)
     {
      ret.min_val=*(start+i);
      ret.index=i;
@@ -44,7 +46,8 @@ unsigned char* estimateA(ImageData i, unsigned char* J,int numPixels)
    brightJ[k]=0;
   for (k=0;k<(numPixels);k++)
    brightJindex[k]=0;
-
+   
+  
   for (r=0;r<(i.height);r++)
   {
    for (c=0;c<(i.width);c++)
@@ -57,10 +60,10 @@ unsigned char* estimateA(ImageData i, unsigned char* J,int numPixels)
       }
      }
    }
- 
+
   for (k=0;k<numPixels;k++)
   {
-   f=(int)(*(i.rdata+brightJindex[k]))+(int)(*(i.gdata+brightJindex[k]))+(int)(*(i.bdata+brightJindex[k]));
+   f=(*(i.rdata+brightJindex[k]))+(*(i.gdata+brightJindex[k]))+(*(i.bdata+brightJindex[k]));
    if(f>(*(A+0)+ *(A+1)+ *(A+2)))
    {
     *(A+0)=*(i.rdata+brightJindex[k]);
@@ -76,7 +79,7 @@ int main(void)
   patch_size=3;
   ImageData cones_data=im_read("cones.jpg");
   unsigned char* J=makeDarkChannel(cones_data,patch_size);
-  numPixels=(int)(0.1*cones_data.pixels);
+  numPixels=10;
   unsigned char* A=estimateA(cones_data,J,numPixels);
   FILE* A_file=fopen("Atmospheric_Light.csv","w");
    fprintf(A_file,"Atmospheric Light Estimation for Red Channel is %d\n",*(A+0));
