@@ -15,8 +15,9 @@ struct jpeg_decompress_struct cinfo;
 struct jpeg_error_mgr jerr;
 int row_stride;
 int buffer_height = 1;
-int h=0;
-int k=0;
+long int h=0;
+long int k=0;
+float cr1,cr2,cr3;
 JSAMPARRAY buffer = (JSAMPARRAY)malloc(sizeof(JSAMPROW) * buffer_height);
 /*JSAMPARRAY rowptr;*/
 buffer[0] = (JSAMPROW)malloc(sizeof(JSAMPLE) * row_stride);
@@ -27,9 +28,9 @@ typedef struct ImageData{
 long int height;
 long int width;
 long int pixels;
-unsigned char* rdata;
-unsigned char* gdata;
-unsigned char* bdata;
+float* rdata;
+float* gdata;
+float* bdata;
 }ImageData;
 */
 
@@ -42,9 +43,9 @@ jpeg_create_decompress(&cinfo);
 FILE *jpg_file=fopen(filename,"rb");/*  file pointer for input file */
 /* Following if-else statement is for checking if the image is present or not */ 
 if(jpg_file==NULL)
-  printf("Image file cant be opened");
+  printf("Image file is not found");
 else 
-  printf("Image file opened successfully\n");
+  printf("Image found in the Directory\n");
   /*Again some standard library code */
 jpeg_stdio_src(&cinfo,jpg_file);
 jpeg_read_header(&cinfo,TRUE);
@@ -56,19 +57,19 @@ buffer = (*cinfo.mem->alloc_sarray)
 		
 /* data_file is the file pointer pointing to memory for decompressed image file */
  		
-FILE *data_file=fopen("data.csv","w");
+//FILE *data_file=fopen("data.csv","w");
 /* printing height of image in file */
-fprintf(data_file,"The height of %s is %d\n",filename,cinfo.output_height);
+//fprintf(data_file,"The height of %s is %d\n",filename,cinfo.output_height);
 /*printing width of image in file */
-fprintf(data_file,"The width of %s is %d\n",filename,cinfo.output_width);
+//fprintf(data_file,"The width of %s is %d\n",filename,cinfo.output_width);
 /*printing number of pixels in image */
-fprintf(data_file,"Number of pixels in %s is %d\n",filename,cinfo.output_width*cinfo.output_height);
+//fprintf(data_file,"Number of pixels in %s is %d\n",filename,cinfo.output_width*cinfo.output_height);
 ret.height=cinfo.output_height;/*saving height in return object */
 ret.width=cinfo.output_width;/*saving width in return object */
 ret.pixels=(cinfo.output_height*cinfo.output_width);/*saving pixels in return object */
-ret.rdata=(unsigned char*)calloc(ret.pixels,sizeof(char));/* Dynamic memory allotment for Red data */
-ret.gdata=(unsigned char*)calloc(ret.pixels,sizeof(char));/* Dynamic memory allotment for Green data */
-ret.bdata=(unsigned char*)calloc(ret.pixels,sizeof(char));/* Dynamic memory allotment for Blue data */
+ret.rdata=(float*)calloc(ret.pixels,sizeof(float));/* Dynamic memory allotment for Red data */
+ret.gdata=(float*)calloc(ret.pixels,sizeof(float));/* Dynamic memory allotment for Green data */
+ret.bdata=(float*)calloc(ret.pixels,sizeof(float));/* Dynamic memory allotment for Blue data */
 
 /* jpeg_read_scanlines is jpeg library function which reads a image by row-wise and saves it in buffer,We will take those values from buffer and store them in return object, print them in our csv file */
 
@@ -78,10 +79,13 @@ while(cinfo.output_scanline<cinfo.output_height)
   /*loop for extracting values stored in buffer, intensity values of a row of image */
   for(k=0;k<=(cinfo.output_width-1);k++)
   {
-  fprintf(data_file,"(%d,%d,%d)\n",*(*(buffer)+(3*k)),*(*(buffer)+(3*k)+1),*(*(buffer)+(3*k)+2));
-  *(ret.rdata+k+(ret.width*h))=*(*(buffer)+(3*k));
-  *(ret.gdata+k+(ret.width*h))=*(*(buffer)+(3*k)+1);
-  *(ret.bdata+k+(ret.width*h))=*(*(buffer)+(3*k)+2);
+  cr1=*(*(buffer)+(3*k));
+  cr2=*(*(buffer)+(3*k)+1);
+  cr3=*(*(buffer)+(3*k)+2);
+  //fprintf(data_file,"(%f,%f,%f)\n",(cr1/255),(cr2/255),(cr3/255));
+  *(ret.rdata+k+(ret.width*h))=(cr1/255);
+  *(ret.gdata+k+(ret.width*h))=(cr2/255);
+  *(ret.bdata+k+(ret.width*h))=(cr3/255);
   }
   h++;
 }

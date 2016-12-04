@@ -1,3 +1,5 @@
+/* This code is not compile ready and this is used to write one of functions required by removefog.c, compile that file which is linked to this file via make-file */
+
 /*Include all the libraries that are needed */
 #include<math.h>
 #include<stdio.h>
@@ -5,10 +7,10 @@
 #include <math.h>
 #include "DataTypes.h"
 /* In this program we assume that We have already read Image intensties and these were supplied to Dark Channel method along with patch size and these two were the inputs for the program */
-int minarray(unsigned char* start,int size);/*forward declaration to avoid compiler warnings */
-unsigned char* makeDarkChannel(ImageData i, int patch_size)
+float minarray(float* start,int size);/*forward declaration to avoid compiler warnings */
+float* makeDarkChannel(ImageData i, int patch_size)
 {
-  int r,c,h,k,f,h1,k1;/* Declaration of loop variables*/
+  long int r,c,h,k,f,h1,k1;/* Declaration of loop variables*/
   
   /* As per the MakeDarkChannel.m actual patch size was derived from patch_size input, One has to be careful with variables when using math functions */
   
@@ -17,10 +19,10 @@ unsigned char* makeDarkChannel(ImageData i, int patch_size)
   
   /*Buffer for storing all the intensity values of the elements in that patch*/
   
-  unsigned char buffer[3*(act_patch_size+1)*(act_patch_size+1)];
+  float buffer[3*(act_patch_size+1)*(act_patch_size+1)];
   f=i.pixels;
   /* f is used as dummy purposes for this program */
-  unsigned char* J=(unsigned char*)calloc(f,sizeof(char));
+  float* J=(float*)calloc(f,sizeof(float));
   
   /*Dynamic memory allocation is done for J, We should free this!!*/
   /* In order to avoid padding we dont loop to each and every variable we just loop to extent upto which covers all the elements in the image, here r is loop variable for rows and c is for columns */
@@ -66,13 +68,13 @@ unsigned char* makeDarkChannel(ImageData i, int patch_size)
   return J;
  }
  /* Defintions of the minarray whose semantics are straight forward */
-int minarray(unsigned char* start,int size)
+float minarray(float* start,int size)
    {
-    int min_val=*(start);
-    char ret;
+    float min_val=*(start);
+    float ret;
     int i;
     for(i=0;i<size;i++)
-    if(*(start+i)<min_val)
-    min_val=*(start+i);
+     if(*(start+i)<min_val)
+      min_val=*(start+i);
     return min_val;
     }
